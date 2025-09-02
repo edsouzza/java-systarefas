@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2017-10-27T12:26:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relEtiqueta" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f7e5051c-ea19-4f15-8baf-0bef550b6322">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="conTarefas"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="param" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT p.estacao,p.serie,p.chapa,p.ip,m.descricao
+FROM
+tblPatrimonios p, tblModelos m
+WHERE 
+(p.estacao=$P{param} OR p.serie=$P{param} OR p.chapa=$P{param} OR p.ip=$P{param})
+and
+p.status='ATIVO'
+and
+p.modeloid=m.codigo]]>
+	</queryString>
+	<field name="ESTACAO" class="java.lang.String"/>
+	<field name="SERIE" class="java.lang.String"/>
+	<field name="CHAPA" class="java.lang.String"/>
+	<field name="IP" class="java.lang.String"/>
+	<field name="DESCRICAO" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="10" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="244" splitType="Stretch">
+			<rectangle>
+				<reportElement x="134" y="10" width="300" height="220" uuid="ef7cb57b-e0ea-4e9c-8a0c-4f444a3778dc"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="143" y="16" width="281" height="34" uuid="b29350cf-3839-43ec-a356-ba893bced307"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="143" y="57" width="281" height="56" uuid="fdb2e0ca-efc4-4545-bc69-7a34becdf2d7"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="144" y="120" width="279" height="100" uuid="c37fabdc-a0d4-4434-8336-7902cbb5dbd0"/>
+			</rectangle>
+			<textField>
+				<reportElement x="143" y="18" width="280" height="30" uuid="b7391482-e083-43f2-b9a2-9d2ac0303cfb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTACAO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="150" y="87" width="82" height="16" uuid="60d26176-2b46-4b85-a329-14e1e7cf3397">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERIE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="150" y="67" width="82" height="16" uuid="bb617368-667d-470d-b4bc-18fce8bbe3bb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SERIE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="244" y="87" width="82" height="16" uuid="a4e259b8-3f07-43c2-8ecb-862c55fd610f">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CHAPA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="244" y="67" width="82" height="16" uuid="ff3742dc-c45c-4d84-8ab3-ef352c8e5dc0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CHAPA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="336" y="87" width="82" height="16" uuid="1ada8e0a-24e5-48f1-8a38-450f75f9296c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="336" y="67" width="82" height="16" uuid="443cab7c-e050-4f29-a4d2-73880a429c5c"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IP]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="144" y="120" width="278" height="100" uuid="2e45c47b-94b0-46d7-861b-3fc6a10221b1"/>
+				<box padding="12"/>
+				<textElement>
+					<font fontName="Times New Roman" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRICAO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

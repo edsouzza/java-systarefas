@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="36">
+        <file>
+            <url>src/visao/F_LISTAMEMOSTRANSFERIDOS.java</url>
+            <bookmark id="24">
+                <name/>
+                <line>319</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/biblioteca/MetodosPublicos.java</url>
+            <bookmark id="6">
+                <name/>
+                <line>248</line>
+                <key/>
+            </bookmark>
+            <bookmark id="4">
+                <name/>
+                <line>592</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>732</line>
+                <key/>
+            </bookmark>
+            <bookmark id="19">
+                <name/>
+                <line>1773</line>
+                <key/>
+            </bookmark>
+            <bookmark id="7">
+                <name/>
+                <line>2235</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_REATIVARSECAO.java</url>
+            <bookmark id="35">
+                <name/>
+                <line>29</line>
+                <key/>
+            </bookmark>
+            <bookmark id="34">
+                <name/>
+                <line>222</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_GERARTXTENTRADAAUTO.java</url>
+            <bookmark id="18">
+                <name/>
+                <line>341</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_GERARTXTENVIO.java</url>
+            <bookmark id="25">
+                <name/>
+                <line>852</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_MEMOITENSTRANSFERIDOS.java</url>
+            <bookmark id="15">
+                <name/>
+                <line>626</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_PATRIMONIOS.java</url>
+            <bookmark id="3">
+                <name/>
+                <line>2045</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/Dao/DAOSecao.java</url>
+            <bookmark id="27">
+                <name/>
+                <line>283</line>
+                <key/>
+            </bookmark>
+            <bookmark id="36">
+                <name/>
+                <line>373</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_LOGIN.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>393</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_EMPRESA.java</url>
+            <bookmark id="2">
+                <name/>
+                <line>477</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_CONSIMPRESSORAS.java</url>
+            <bookmark id="12">
+                <name/>
+                <line>61</line>
+                <key/>
+            </bookmark>
+            <bookmark id="13">
+                <name/>
+                <line>72</line>
+                <key/>
+            </bookmark>
+            <bookmark id="17">
+                <name/>
+                <line>1496</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_MEMOITENSRECEBIDOS.java</url>
+            <bookmark id="16">
+                <name/>
+                <line>503</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_GERARTXTENVIOMANUAL.java</url>
+            <bookmark id="26">
+                <name/>
+                <line>779</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_GERARTXTENVIOAUTO.java</url>
+            <bookmark id="23">
+                <name/>
+                <line>486</line>
+                <key/>
+            </bookmark>
+            <bookmark id="21">
+                <name/>
+                <line>909</line>
+                <key/>
+            </bookmark>
+            <bookmark id="22">
+                <name/>
+                <line>1181</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/Dao/DAOPatrimonio.java</url>
+            <bookmark id="20">
+                <name/>
+                <line>556</line>
+                <key/>
+            </bookmark>
+            <bookmark id="9">
+                <name/>
+                <line>1050</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/visao/F_SECOES.java</url>
+            <bookmark id="31">
+                <name/>
+                <line>54</line>
+                <key/>
+            </bookmark>
+            <bookmark id="30">
+                <name/>
+                <line>698</line>
+                <key/>
+            </bookmark>
+            <bookmark id="28">
+                <name/>
+                <line>1073</line>
+                <key/>
+            </bookmark>
+            <bookmark id="33">
+                <name/>
+                <line>1083</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/F:/ARQS-JAVA/PROJETOS%20JAVA/SYSTAREFAS/Tarefas/src/conexao/ConnConexao.java</file>
+            <file>file:/F:/ARQS-JAVA/PROJETOS%20JAVA/SYSTAREFAS/Tarefas/src/biblioteca/GetIPServidor.java</file>
+            <file>file:/F:/ARQS-JAVA/PROJETOS%20JAVA/SYSTAREFAS/Tarefas/src/visao/F_SECOES.java</file>
+            <file>file:/F:/ARQS-JAVA/PROJETOS%20JAVA/SYSTAREFAS/Tarefas/src/visao/F_LOGIN.java</file>
+        </group>
+    </open-files>
+</project-private>

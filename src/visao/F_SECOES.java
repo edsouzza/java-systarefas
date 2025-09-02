@@ -1,0 +1,1356 @@
+package visao;
+
+import Dao.DAOCliente;
+import biblioteca.Biblioteca;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import conexao.ConnConexao;
+import biblioteca.ModeloTabela;
+import Dao.DAOSecao;
+import biblioteca.MetodosPublicos;
+import biblioteca.TudoMaiusculas;
+import biblioteca.TudoMinusculas;
+import static biblioteca.VariaveisPublicas.data;
+import static biblioteca.VariaveisPublicas.codigoSelecionado;
+import static biblioteca.VariaveisPublicas.clicouNaTabela;
+import static biblioteca.VariaveisPublicas.contador;
+import static biblioteca.VariaveisPublicas.entidadeInativa;
+import static biblioteca.VariaveisPublicas.nomeRelatorio;
+import static biblioteca.VariaveisPublicas.codigoDeptoSelecionado;
+import controle.ControleListaSecoes;
+import controle.CtrlSecoes;
+import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import javax.swing.ListSelectionModel;
+import modelo.Secao;
+import static biblioteca.VariaveisPublicas.tabela;
+import static biblioteca.VariaveisPublicas.sql;
+import static biblioteca.VariaveisPublicas.status;
+import static biblioteca.VariaveisPublicas.totalRegs;
+import controle.ControleGravarLog;
+import controle.CtrlCliente;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.util.List;
+import modelo.Cliente;
+
+public class F_SECOES extends javax.swing.JFrame 
+{
+    ConnConexao conexao  = new ConnConexao();  
+    Biblioteca umabiblio              = new Biblioteca();
+    Secao umModSecao                  = new Secao();
+    DAOSecao umDAOSecao               = new DAOSecao();  
+    CtrlSecoes umControleSecao        = new CtrlSecoes();
+    MetodosPublicos umMetodo          = new MetodosPublicos();
+    String ramal,secao,email,nome,pr,sei,simproc,motivoInativacao,descricaoDeInativacao,obs,sNomeDepto  = "";
+    CtrlSecoes ctrSecao               = new CtrlSecoes();
+    ControleListaSecoes umCtrLista    = new ControleListaSecoes();
+    ControleGravarLog umGravarLog     = new ControleGravarLog();    
+    
+    Cliente     umModCliente              = new Cliente();
+    CtrlCliente ctrCliente            = new CtrlCliente();
+    DAOCliente  clienteDAO             = new DAOCliente();    
+    
+    int codigo,ind,deptoid,codDepto,indiceDeptoAtual   = 0;
+    boolean gravando,editando;  //controla no botão gravar entre gravar novo registro e gravar alteração de um registro
+    String sqlDefault        = "select * from tblsecoes where status='ATIVO' order by nome";
+    String sqlInativos       = "select * from tblsecoes where status='INATIVO' order by nome";
+    String sqlVazia          = "select * from tblsecoes where codigo = 0";
+    String dataDia           = data;
+    List<String> listaDeptos = new ArrayList<>();
+    String nomeInicialDaSecao, nomeFinalDaSecao, newNomeSemUsuario, oldNomeSemUsuario;
+
+    public F_SECOES() {
+        initComponents();      
+        Leitura();             //neste metodo eu defino se abrira o formulario de ATIVOS ou INATIVOS pela variavel status da tela PRINCIPAL 
+        setResizable(false);   //desabilitando o redimencionamento da tela        
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE); //desabilitando o botao fechar        
+        
+        //configuracoes dos edits 
+        umabiblio.configurarCamposTextos(txtPESQUISA);
+        umabiblio.configurarCamposTextos(txtPR);
+        umabiblio.configurarCamposTextos(txtSIMPROC);
+        umabiblio.configurarCamposTextos(txtSEI);
+        txtCODIGO.setFont(new Font("TimesRoman", Font.BOLD, 12));   
+        txtEMAIL.setFont(new Font("TimesRoman", Font.BOLD, 12));    
+        txtEMAIL.setDocument(new TudoMinusculas());
+        txtNOME.setFont(new Font("TimesRoman", Font.BOLD, 12));    
+        txtOBS.setFont(new Font("TimesRoman", Font.BOLD, 12));  
+        txtRAMAL.setFont(new Font("TimesRoman", Font.BOLD, 12));  
+        txtNOME.setDocument(new TudoMaiusculas());           
+        
+        //Impede que formulario seja arrastado na tela
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                setEnabled(false);
+                setEnabled(true);
+            }
+        });//fim addComponentListener
+        
+      //configuração dos botões
+      umabiblio.configurarBotoes(btnNovo);
+      umabiblio.configurarBotoes(btnEditar);
+      umabiblio.configurarBotoes(btnGravar);
+      umabiblio.configurarBotoes(btnImprimir);
+      umabiblio.configurarBotoes(btnVoltar);
+      umabiblio.configurarBotoes(btnSair);      
+      jTabela.setFont(new Font("Arial", Font.BOLD, 12));  
+      txtCODIGO.setForeground(Color.red);
+        
+    }
+    
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jBoxDados = new javax.swing.JLayeredPane();
+        jLabel1 = new javax.swing.JLabel();
+        txtNOME = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtCODIGO = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtEMAIL = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        cmbStatus = new javax.swing.JComboBox<>();
+        txtPR = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtSIMPROC = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        txtSEI = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        txtRAMAL = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        cmbDepartamento = new javax.swing.JComboBox<>();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtOBS = new javax.swing.JTextArea();
+        jBoxBotoes = new javax.swing.JLayeredPane();
+        btnGravar = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
+        btnSair = new javax.swing.JButton();
+        btnNovo = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
+        btnImprimir = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTabela = new javax.swing.JTable();
+        jBoxPesquisar = new javax.swing.JLayeredPane();
+        txtPESQUISA = new javax.swing.JTextField();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(0, 860));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
+        getContentPane().setLayout(null);
+
+        jBoxDados.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jBoxDados.setName("panelDados"); // NOI18N
+
+        jLabel1.setText("NOME");
+
+        txtNOME.setForeground(new java.awt.Color(51, 51, 255));
+        txtNOME.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNOMEFocusGained(evt);
+            }
+        });
+        txtNOME.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtNOMEKeyPressed(evt);
+            }
+        });
+
+        jLabel3.setText("CÓDIGO");
+
+        txtCODIGO.setForeground(new java.awt.Color(51, 51, 255));
+
+        jLabel5.setText("EMAIL");
+
+        txtEMAIL.setForeground(new java.awt.Color(51, 51, 255));
+        txtEMAIL.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEMAILKeyPressed(evt);
+            }
+        });
+
+        jLabel2.setText("STATUS");
+
+        cmbStatus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cmbStatus.setEnabled(false);
+
+        txtPR.setForeground(new java.awt.Color(51, 51, 255));
+        txtPR.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPRKeyPressed(evt);
+            }
+        });
+
+        jLabel4.setText("PR");
+
+        txtSIMPROC.setForeground(new java.awt.Color(51, 51, 255));
+        txtSIMPROC.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSIMPROCKeyPressed(evt);
+            }
+        });
+
+        jLabel6.setText("SIMPROC");
+
+        txtSEI.setForeground(new java.awt.Color(51, 51, 255));
+        txtSEI.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtSEIMouseClicked(evt);
+            }
+        });
+        txtSEI.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSEIKeyPressed(evt);
+            }
+        });
+
+        jLabel7.setText("SEI");
+
+        jLabel8.setText("OBSERVAÇÕES");
+
+        jLabel9.setText("FONE / RAMAL");
+
+        txtRAMAL.setForeground(new java.awt.Color(51, 51, 255));
+        txtRAMAL.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtRAMALKeyPressed(evt);
+            }
+        });
+
+        jLabel10.setText("DEPARTAMENTO");
+
+        cmbDepartamento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cmbDepartamento.setEnabled(false);
+
+        txtOBS.setEditable(false);
+        txtOBS.setColumns(20);
+        txtOBS.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        txtOBS.setRows(5);
+        txtOBS.setToolTipText("Histórico e observações");
+        txtOBS.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtOBSFocusGained(evt);
+            }
+        });
+        txtOBS.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtOBSMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                txtOBSMousePressed(evt);
+            }
+        });
+        jScrollPane4.setViewportView(txtOBS);
+
+        jBoxDados.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtNOME, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtCODIGO, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtEMAIL, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(cmbStatus, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtPR, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtSIMPROC, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtSEI, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel7, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel9, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(txtRAMAL, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jLabel10, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(cmbDepartamento, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxDados.setLayer(jScrollPane4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jBoxDadosLayout = new javax.swing.GroupLayout(jBoxDados);
+        jBoxDados.setLayout(jBoxDadosLayout);
+        jBoxDadosLayout.setHorizontalGroup(
+            jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jBoxDadosLayout.createSequentialGroup()
+                        .addGap(468, 468, 468)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(cmbDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtRAMAL, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)))
+                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(txtPR, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(77, 77, 77))
+            .addGroup(jBoxDadosLayout.createSequentialGroup()
+                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jBoxDadosLayout.createSequentialGroup()
+                                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel1))
+                                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                                        .addComponent(txtCODIGO, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtNOME, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEMAIL, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jBoxDadosLayout.createSequentialGroup()
+                                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel6)
+                                    .addComponent(txtSIMPROC, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(txtSEI, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel8)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jBoxDadosLayout.setVerticalGroup(
+            jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jBoxDadosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCODIGO, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNOME, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtEMAIL, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPR, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(11, 11, 11)
+                .addGroup(jBoxDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtRAMAL, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmbDepartamento, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSIMPROC, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jBoxDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSEI, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(11, 11, 11)
+                .addComponent(jLabel8)
+                .addGap(2, 2, 2)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        getContentPane().add(jBoxDados);
+        jBoxDados.setBounds(10, 70, 850, 270);
+
+        jBoxBotoes.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+
+        btnGravar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/btn_gravar.jpg"))); // NOI18N
+        btnGravar.setText("Gravar");
+        btnGravar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnGravar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGravarActionPerformed(evt);
+            }
+        });
+
+        btnVoltar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/btn_inicio.gif"))); // NOI18N
+        btnVoltar.setText("Voltar");
+        btnVoltar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+
+        btnSair.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/btn_sair.gif"))); // NOI18N
+        btnSair.setText("Sair");
+        btnSair.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnSair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSairActionPerformed(evt);
+            }
+        });
+
+        btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/users16.jpg"))); // NOI18N
+        btnNovo.setText("Nova");
+        btnNovo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
+
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/btn_blocoNotas.gif"))); // NOI18N
+        btnEditar.setText("Editar");
+        btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
+
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/btn_imprimir.gif"))); // NOI18N
+        btnImprimir.setText("Imprimir");
+        btnImprimir.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
+
+        jBoxBotoes.setLayer(btnGravar, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxBotoes.setLayer(btnVoltar, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxBotoes.setLayer(btnSair, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxBotoes.setLayer(btnNovo, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxBotoes.setLayer(btnEditar, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jBoxBotoes.setLayer(btnImprimir, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jBoxBotoesLayout = new javax.swing.GroupLayout(jBoxBotoes);
+        jBoxBotoes.setLayout(jBoxBotoesLayout);
+        jBoxBotoesLayout.setHorizontalGroup(
+            jBoxBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jBoxBotoesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addComponent(btnGravar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jBoxBotoesLayout.setVerticalGroup(
+            jBoxBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jBoxBotoesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jBoxBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnNovo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGravar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jBoxBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jBoxBotoes);
+        jBoxBotoes.setBounds(10, 350, 850, 60);
+
+        jTabela.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jTabela.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jTabela.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTabelaMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTabela);
+
+        getContentPane().add(jScrollPane2);
+        jScrollPane2.setBounds(10, 420, 850, 240);
+
+        jBoxPesquisar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jBoxPesquisar.setName("panelDados"); // NOI18N
+
+        txtPESQUISA.setToolTipText("Digite INATIVOS para imprimir todos os registos com status inativatdos");
+        txtPESQUISA.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPESQUISAKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtPESQUISAKeyReleased(evt);
+            }
+        });
+
+        jBoxPesquisar.setLayer(txtPESQUISA, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout jBoxPesquisarLayout = new javax.swing.GroupLayout(jBoxPesquisar);
+        jBoxPesquisar.setLayout(jBoxPesquisarLayout);
+        jBoxPesquisarLayout.setHorizontalGroup(
+            jBoxPesquisarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jBoxPesquisarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtPESQUISA, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jBoxPesquisarLayout.setVerticalGroup(
+            jBoxPesquisarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jBoxPesquisarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtPESQUISA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jBoxPesquisar);
+        jBoxPesquisar.setBounds(10, 10, 850, 50);
+
+        setSize(new java.awt.Dimension(883, 716));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void mostrarTitulo()
+    {
+        PreencherTabela(sqlDefault);   //abre o formulario mostrando todos os registro cadastrados na tabela ATIVOS 
+        this.setTitle(umabiblio.mostrarTituloDoFormulario());
+    }
+    
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+      if(umabiblio.permissaoLiberada()){ 
+        popularComboStatus();
+        HabilitarDesabilitarBotoes(false);
+        btnVoltar.setText("Cancelar");
+        umabiblio.limparTodosCampos(jBoxDados);
+        txtPESQUISA.setText(null);
+        txtNOME   .requestFocus();
+        txtNOME   .setEditable(true);
+        txtPR     .setEditable(true);
+        txtSIMPROC.setEditable(true);
+        txtSEI    .setEditable(true);
+        txtEMAIL  .setEditable(true);
+        txtOBS    .setEditable(true);
+        txtRAMAL  .setEditable(true);
+        gravando = true;       
+        txtCODIGO.setText(String.valueOf(umabiblio.mostrarProximoCodigo(tabela)));
+        preencherComboDepartamentos(null);
+        PreencherTabela(sqlVazia); 
+      }
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
+        //conexao.desconectar();
+        dispose();
+    }//GEN-LAST:event_btnSairActionPerformed
+
+    private void btnGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGravarActionPerformed
+        if(cmbDepartamento.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "Selecione um Departamento para continuar o cadastro!", "Nenhum Departamento selecionado!", 2);             
+        }else{
+            if (gravando) {
+                gravarRegistro();
+            } else {
+                gravarEdicaoRegistro();
+            }
+              Leitura();
+        }
+        
+    }//GEN-LAST:event_btnGravarActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+         Leitura();      
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+      if(umabiblio.permissaoLiberada()){
+        Edicao(); 
+        //controla apresentacao dos edits libera pra edição        
+        txtNOME         .setEditable(true);
+        txtEMAIL        .setEditable(true);
+        txtPR           .setEditable(true);
+        txtSIMPROC      .setEditable(true);
+        txtSEI          .setEditable(true);
+        txtOBS          .setEditable(true);
+        txtRAMAL        .setEditable(true);
+        txtNOME.requestFocus();   
+        
+        //popular a combo status com opcoes ATIVO pra manter inalterado e INATIVO caso deseje inativar
+        cmbStatus.removeAllItems();
+        cmbStatus.addItem("ATIVO");
+        cmbStatus.addItem("INATIVO");
+        
+        cmbDepartamento.setEnabled(true);
+        //mostrarDados();
+        preencherComboDepartamentos(sNomeDepto);
+        
+        PreencherTabela(sqlVazia);  
+      }
+    }//GEN-LAST:event_btnEditarActionPerformed
+        
+    private void preencherComboDepartamentos(String deptoAtual){
+    // carrega todos os departamentos
+        umabiblio.PreencherComboVariandoTipo(
+            cmbDepartamento,
+            "SELECT nome FROM tbldepartamentos ORDER BY nome",
+            "nome"
+        );
+
+        // seta o departamento do registro
+        if (deptoAtual != null && !deptoAtual.isEmpty()) {
+            cmbDepartamento.setSelectedItem(deptoAtual);
+        } else {
+            cmbDepartamento.setSelectedIndex(-1); // nada selecionado
+        }
+    }
+    
+    public String MostrarDeptoDaSecaoSelecionada(int idDepto) {
+        //utilizada quando o usuario clicar em um registro da tabela
+        conexao.conectar();
+        sql = "select * from tbldepartamentos where codigo =" + idDepto;
+        conexao.ExecutarPesquisaSQL(sql);
+        try {
+            if (conexao.rs.next()) {
+                sNomeDepto = conexao.rs.getString("nome");
+                cmbDepartamento.removeAllItems();      //primeiro apaga os ítens que foram selecionados anteriormente
+                cmbDepartamento.addItem(sNomeDepto);   //seta a seçao do usuario selecionado                
+                //JOptionPane.showMessageDialog(null,"SECAO SELECIONADA..: " +conexao.resultset.getString("nome"));
+            };
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao pesquisar seção!\nErro: " + ex.getMessage());
+            return null;
+        } finally {
+            conexao.desconectar();
+        }
+        return sNomeDepto;
+    }
+    
+    private void mostrarDados()
+    {
+        //AO CLICAR EM UM REGISTRO DA TABELA MOSTRAR OS DADOS NOS EDITS        
+        int codigo = (int) jTabela.getValueAt(jTabela.getSelectedRow(), 0);
+        codigoSelecionado = codigo;
+        
+        sql = "SELECT s.*, d.nome as depto, d.codigo FROM tblsecoes s, tbldepartamentos d WHERE d.codigo=s.deptoid and s.codigo="+codigo+"";        
+        conexao.conectar();
+        conexao.ExecutarPesquisaSQL(sql);          
+        try {          
+            
+            if( conexao.rs.next())
+            {
+                //mostrando os dados do registro selecionado nos edits
+                txtCODIGO.setText(String.valueOf(conexao.rs.getInt("codigo")));
+                txtNOME.setText(conexao.rs.getString("nome")); 
+                txtEMAIL.setText(conexao.rs.getString("email"));
+                txtPR.setText(conexao.rs.getString("pr")); 
+                txtSIMPROC.setText(conexao.rs.getString("simproc"));
+                txtSEI.setText(conexao.rs.getString("sei"));
+                txtRAMAL.setText(conexao.rs.getString("ramal"));
+                txtOBS.setText(conexao.rs.getString("obs"));  
+                codDepto = (conexao.rs.getInt("deptoid"));  
+                
+                //pegar nome atual da secao
+                nomeInicialDaSecao = txtNOME.getText(); 
+                
+                //gerando vetor com nomes
+                listaDeptos.add(nome);
+                
+                //preenche a combo departamentos e seta o depto do registro selecionado
+                MostrarDeptoDaSecaoSelecionada(codDepto);
+                
+                cmbStatus.removeAllItems();
+                cmbStatus.addItem(conexao.rs.getString("status"));
+            }  
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null,"Erro ao tentar selecionar a seção!\nERRO : "+ex.getMessage());
+        }finally{
+             conexao.desconectar();
+        }
+
+        //controla apresentacao dos edits
+        txtPESQUISA     .setEditable(false);
+        txtCODIGO       .setEnabled(true);
+        txtCODIGO       .setEditable(false);
+        txtNOME         .setEnabled(true);
+        txtNOME         .setEditable(false);
+        txtEMAIL        .setEnabled(true);
+        txtEMAIL        .setEditable(false);
+        txtPR           .setEnabled(true);
+        txtPR           .setEditable(false);
+        txtSIMPROC      .setEnabled(true);
+        txtSIMPROC      .setEditable(false);        
+        txtSEI          .setEnabled(true);        
+        txtSEI          .setEditable(false);
+        txtOBS          .setEnabled(true);
+        txtOBS          .setEditable(false);
+        txtRAMAL        .setEnabled(true);
+        txtRAMAL        .setEditable(false);
+        
+    }
+   
+    private void jTabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabelaMouseClicked
+        //AO CLICAR EM UM REGISTRO DA TABELA MOSTRAR OS DADOS NOS EDITS
+        clicouNaTabela = true;
+        mostrarDados();
+        btnEditar      .setEnabled(true);
+        btnGravar      .setEnabled(false);
+        btnNovo        .setEnabled(false);
+        btnImprimir    .setEnabled(true); //assim poderá imprimir o registro selecionado
+        btnVoltar      .setEnabled(true);
+        btnSair        .setEnabled(false);         
+        
+    }//GEN-LAST:event_jTabelaMouseClicked
+
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        if(txtPESQUISA.getText().equals("INATIVOS")) 
+        { 
+             if(!umMetodo.temInativos(tabela))
+            {
+                JOptionPane.showMessageDialog(null, "Essa tabela não tem registros inativados no momento!", "Nada encontrado!", 2);
+                btnVoltarActionPerformed(null);
+            }else{  
+                contador++;  
+                //IMPRESSAO DO RELATORIO PARA IMPRESSORA
+                if (clicouNaTabela) {
+                    nomeRelatorio = "relsecaoselecionada";
+                } else {            
+                    nomeRelatorio = "relsecoes";
+                }
+
+                entidadeInativa = txtPESQUISA.getText(); //DEFINE SE IMPRIMIRA ATIVOS OU INATIVOS-> DIGITE INATIVOS NA PESQUISA                
+
+                //IMPRESSAO DO PDF
+                F_IMPRESSAO frm = new F_IMPRESSAO();
+                frm.setVisible(true);
+             }
+        }else{
+            contador++;  
+                //IMPRESSAO DO RELATORIO PARA IMPRESSORA
+                if (clicouNaTabela) {
+                    nomeRelatorio = "relsecaoselecionada";
+                } else {            
+                    nomeRelatorio = "relsecoes";
+                }
+
+                entidadeInativa = txtPESQUISA.getText(); //DEFINE SE IMPRIMIRA ATIVOS OU INATIVOS-> DIGITE INATIVOS NA PESQUISA
+               
+                //IMPRESSAO DO PDF
+                F_IMPRESSAO frm = new F_IMPRESSAO();
+                frm.setVisible(true);
+        }
+        btnVoltar.setEnabled(true);
+        btnImprimir.setEnabled(false);
+        btnNovo.setEnabled(false);
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void txtNOMEFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNOMEFocusGained
+        txtNOME.selectAll();//selecionando todo o texto pra edição
+    }//GEN-LAST:event_txtNOMEFocusGained
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        conexao.conectar();        
+        String sql="select * from tblsecoes where status='ATIVO' order by nome";  
+        conexao.ExecutarPesquisaSQL(sql);
+        try {
+            if( conexao.rs.next())
+            {   //selecionando a primeira linha somente se tiver registros
+                jTabela.addRowSelectionInterval(0,0);
+            }
+        }catch (SQLException ex) 
+        {
+            JOptionPane.showMessageDialog(null, "Erro ao preencher o combo de seções!\nErro: " + ex.getMessage());
+        }finally{
+             conexao.desconectar();
+        }         
+        
+    }//GEN-LAST:event_formWindowOpened
+
+    private void txtPESQUISAKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPESQUISAKeyPressed
+        //se teclar enter estando dentro da pesquisa limpar a pesquisa
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtPESQUISA.setText(null);       
+        }
+    }//GEN-LAST:event_txtPESQUISAKeyPressed
+
+    private void filtrarPorDigitacao(String pPesq)   
+    {
+        if(status.equals("INATIVO"))
+            PreencherTabela("select * from tblsecoes where (nome like '%"+pPesq+"%'"+" OR pr like '%"+pPesq+"%'"+" OR sei like '%"+pPesq+"%'"+" OR simproc like '%"+pPesq+"%'"+" OR email like '%"+pPesq+"%'"+") and status='INATIVO' order by nome");
+        else
+        {
+            PreencherTabela("select * from tblsecoes where (nome like '%"+pPesq+"%'"+" OR pr like '%"+pPesq+"%'"+" OR sei like '%"+pPesq+"%'"+" OR simproc like '%"+pPesq+"%'"+" OR email like '%"+pPesq+"%'"+") and status='ATIVO' order by nome");
+        }
+        this.setTitle("Total de registros retornados pela pesquisa = "+totalRegs);
+    }
+    
+    private void txtPESQUISAKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPESQUISAKeyReleased
+        //filtrar o nome conforme o usuario for digitando
+        filtrarPorDigitacao(txtPESQUISA.getText());
+    }//GEN-LAST:event_txtPESQUISAKeyReleased
+
+    private void txtNOMEKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNOMEKeyPressed
+        //se teclar enter pular para o proximo campo
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtEMAIL.requestFocus();          
+        }
+    }//GEN-LAST:event_txtNOMEKeyPressed
+
+    private void txtPRKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPRKeyPressed
+        //se teclar enter pular para o proximo campo
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtSIMPROC.requestFocus();          
+        }
+    }//GEN-LAST:event_txtPRKeyPressed
+
+    private void txtEMAILKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEMAILKeyPressed
+        //se teclar enter pular para o proximo campo
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtPR.requestFocus();          
+        }
+    }//GEN-LAST:event_txtEMAILKeyPressed
+
+    private void txtSIMPROCKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSIMPROCKeyPressed
+       //se teclar enter pular para o proximo campo
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtSEI.requestFocus();          
+        }
+    }//GEN-LAST:event_txtSIMPROCKeyPressed
+
+    private void txtSEIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSEIKeyPressed
+         //se teclar enter pular para o proximo campo
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtRAMAL.requestFocus();          
+        }
+    }//GEN-LAST:event_txtSEIKeyPressed
+
+    private void txtRAMALKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRAMALKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+          txtOBS.requestFocus();          
+        }
+    }//GEN-LAST:event_txtRAMALKeyPressed
+
+    private void txtOBSFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtOBSFocusGained
+                
+        if( txtOBS.getText().equals("") ){
+            if(gravando){
+                umMetodo.novaLinhaComData(txtOBS);
+            }
+        }
+        if(editando){
+            //alterando o ponteiro do mouse indicando que o campo esta editável
+            txtOBS.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }//GEN-LAST:event_txtOBSFocusGained
+
+    private void txtOBSMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtOBSMouseClicked
+        
+    }//GEN-LAST:event_txtOBSMouseClicked
+
+    private void txtSEIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtSEIMouseClicked
+        txtSEI.selectAll();
+    }//GEN-LAST:event_txtSEIMouseClicked
+
+    private void txtOBSMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtOBSMousePressed
+        if(editando || gravando){
+            umMetodo.novaLinhaComData(txtOBS);
+        }
+    }//GEN-LAST:event_txtOBSMousePressed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(F_SECOES.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(F_SECOES.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(F_SECOES.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(F_SECOES.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new F_SECOES().setVisible(true);
+
+            }
+        });
+    }
+       
+     private void popularComboStatus(){
+        cmbStatus.removeAllItems();
+        cmbStatus.addItem("ATIVO");
+    }
+       
+    private void gravarRegistro() {
+        //se digitou algo nos campos nome e rf        
+        if ( txtNOME.getText().length() > 0 ) 
+        {
+            //setando os valores dos edits   
+            nome                    = txtNOME.getText(); 
+            email                   = txtEMAIL.getText(); 
+            pr                      = txtPR.getText(); 
+            sei                     = txtSEI.getText(); 
+            deptoid                 = umabiblio.buscarCodigoGenerico("tbldepartamentos", "nome", cmbDepartamento.getSelectedItem().toString());            
+            simproc                 = txtSIMPROC.getText();             
+            ramal                   = txtRAMAL.getText(); 
+            String status           = cmbStatus.getSelectedItem().toString();
+            codigoDeptoSelecionado  = deptoid;
+            
+            obs = txtOBS.getText().isEmpty() 
+                    ? dataDia+" : Cadastro inicial." 
+                    : txtOBS.getText();
+            txtOBS.setText(obs); 
+                                                 
+            umModSecao.setNome(nome); 
+            umModSecao.setEmail(email);
+            umModSecao.setPr(pr);
+            umModSecao.setSimproc(simproc);
+            umModSecao.setSei(sei);
+            umModSecao.setDeptoid(deptoid);
+            umModSecao.setObs(obs);
+            umModSecao.setStatus(status);
+            umModSecao.setRamal(ramal);
+            
+            if (gravando){
+                if(!umDAOSecao.RegistroDuplicado(umModSecao)) //se nao estiver duplicado libera a gravaçao do registro
+                { 
+                    ctrSecao.salvarSecao(umModSecao);
+                    umMetodo.gravarNomeClienteVirtualSemUsuarioNaTblClientes(nome); //gravando o nome SEM USUARIO SECAO
+                    umGravarLog.gravarLog("cadastro da secao "+umModSecao.getNome());
+                }  
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos para continuar!"); //se nao digitou nada no campo nome da seção
+            txtNOME.requestFocus(); //foco no campo secao
+        }
+        //mostra o titulo do formulario de acordo com o status
+        mostrarTitulo();        
+        gravando = false;
+    }
+    
+    private boolean temFKDeSecoes(int id)
+    {
+        //verificando se tem patrimonios, usuarios ou clientes atrelados a seção que esta sendo inativada se positivo não permitirá inativação
+        conexao.conectar();
+        sql = "select secaoid from tblusuarios where secaoid = "+id;       
+        conexao.ExecutarPesquisaSQL(sql);
+        try 
+        {
+           if(conexao.rs.next())
+           {
+               return true;
+           }else{                
+                sql = "select secaoid from tblclientes where secaoid = "+id;       
+                conexao.ExecutarPesquisaSQL(sql);
+                
+                   if(conexao.rs.next())
+                   {
+                       return true;
+                   }else{                
+                        sql = "select secaoid from tblpatrimonios where secaoid = "+id;       
+                        conexao.ExecutarPesquisaSQL(sql);
+
+                           if(conexao.rs.next())
+                           {
+                               return true;
+                           }      
+                   }                
+           }           
+        } catch (SQLException ex) {            
+               JOptionPane.showMessageDialog(null, "Erro ao tentar pesquisar seções!\nErro: " + ex.getMessage());
+               return false;
+        }
+        return false;
+                
+    }
+    
+    private void gravarNovoNomeSemUsuario()
+    {
+        //SE ALTERAR O NOME DA SECAO O MESMO NOME DEVE SER ATRIBUIDO AO CLIENTE DENOMINADO SEM USUARIO+(NOME DA SECAO) EX: SEM USUARIO ATGCGGM
+        oldNomeSemUsuario  = "SEM USUARIO "+nomeInicialDaSecao;
+        //System.out.println("NOME ANTERIOR : "+oldNomeSemUsuario);
+        
+        newNomeSemUsuario = "SEM USUARIO "+nomeFinalDaSecao;
+        //System.out.println("NOVO NOME : "+newNomeSemUsuario);
+        
+        umModCliente.setNome(newNomeSemUsuario);
+        
+        int codigoNomeAntigo = umMetodo.getCodigoPassandoString("TBLCLIENTES", "nome", oldNomeSemUsuario);
+        //System.out.println("CODIGO DO NOME ANTIGO : "+codigoNomeAntigo);
+                
+        ctrCliente.atualizarNomeSemUsuario(codigoNomeAntigo, newNomeSemUsuario);       
+                
+    }
+    
+    public void verificarStatus()
+    {        
+        //SE ESTIVER INATIVANDO A SEÇÃO
+        
+        motivoInativacao  = JOptionPane.showInputDialog(null, "Entre com o motivo da inativação!", "Inativa Seção e Patrimônios relacionados", 2);        
+        
+        while (motivoInativacao == null || motivoInativacao.equals("")) 
+        {
+            JOptionPane.showMessageDialog(this, "Digite um motivo válido e confirme!");  
+            motivoInativacao  = JOptionPane.showInputDialog(null, "Entre com o motivo da inativação!", "Inativa Seção e Patrimônios relacionados", 2);   
+        }
+        //passando o motivo
+        motivoInativacao  = "\n"+dataDia+" "+": Inativado pelo seguinte motivo : "+motivoInativacao.toLowerCase();
+
+        //executando as inativaçoes no banco | Todas as estações dessa seção serão         
+        umDAOSecao.disponibilizarIPsImpressoras(codigoSelecionado); //codigoSelecionado refere-se ao id da secao clicada no jtable
+        umControleSecao.inativarPatrimonioUsuarioClientes(codigo, motivoInativacao);  
+        umModSecao.setObs(obs+" "+motivoInativacao);
+        umModSecao.setStatus("INATIVO");  //aqui é feita a inativaçao da seção          
+        
+    }
+    
+ 
+
+    private void gravarEdicaoRegistro() 
+    {
+        //setando os valores dos edits  
+        String status = (String) cmbStatus.getSelectedItem();
+        nome          = txtNOME.getText();
+        codigo        = Integer.parseInt(txtCODIGO.getText());
+        email         = txtEMAIL.getText();  
+        pr            = txtPR.getText(); 
+        sei           = txtSEI.getText(); 
+        deptoid       = umabiblio.buscarCodigoGenerico("tbldepartamentos", "nome", cmbDepartamento.getSelectedItem().toString());
+        simproc       = txtSIMPROC.getText(); 
+        ramal         = txtRAMAL.getText(); 
+        
+        //se o campo OBS estiver vazio grava data+Cadastro inicial. -> se clicar no campo insere data+Cadastro inicial. -> resumo nao ficara vazio
+        //se clicar no campo e ja tiver data+Cadastro inicial vai inserir nova informacao com data do dia
+        obs = txtOBS.getText().isEmpty()
+            ? dataDia+" : Cadastro inicial." 
+            : txtOBS.getText();
+            txtOBS.setText(obs);         
+            umModSecao.setObs(obs);
+                
+        if(status.equals("INATIVO"))
+        {
+            verificarStatus(); 
+            umModSecao.setDeptoid(0);
+        }else{
+            umModSecao.setStatus(status); 
+            umModSecao.setDeptoid(deptoid);
+        }               
+        
+        umModSecao.setCodigo(codigo);
+        umModSecao.setNome(nome);        
+        umModSecao.setEmail(email);
+        umModSecao.setPr(pr);
+        umModSecao.setSimproc(simproc);
+        umModSecao.setSei(sei);        
+        umModSecao.setRamal(ramal);
+        
+        
+        if(editando){
+            //verificar se o nome da secao foi alterado
+            //System.out.println("STATUS EDITANDO : "+editando);
+            nomeFinalDaSecao = nome;
+            //System.out.println("NOME INICIAL : "+nomeInicialDaSecao);
+            //System.out.println("NOME FINAL   : "+nomeFinalDaSecao);  
+           
+            if (umMetodo.nomesSaoDiferentes(nomeInicialDaSecao, nomeFinalDaSecao)) {
+                gravarNovoNomeSemUsuario();
+            }
+
+        }
+        
+        //Executando atualizaçao
+        ctrSecao.atualizarSecao(umModSecao); 
+        umMetodo.atualizarNomestacaoSecaoInativada(codigo);//Todos os nomes de estações da Seçao inativada serão inseridos como MICRO
+        umGravarLog.gravarLog("atualizacao no cadastro da secao "+umModSecao.getNome());   
+
+        Leitura();
+        
+        txtNOME.setEditable(false);
+        txtEMAIL.setEditable(false);
+        txtPR.setEditable(false);
+        txtSEI.setEditable(false);
+        txtSIMPROC.setEditable(false);
+        txtOBS.setEditable(false);
+        txtRAMAL.setEditable(false);
+        gravando = false;
+    }    
+    
+    private void Edicao()
+    {
+        //metodo para quando usuario clicar em Editar
+        boolean Habilitar = true;
+        Component[]c      = null;
+        gravando          = false; 
+        editando          = true;
+        
+        btnNovo          .setEnabled(!Habilitar);
+        btnImprimir      .setEnabled(!Habilitar);
+        btnSair          .setEnabled(!Habilitar);
+        btnGravar        .setEnabled(Habilitar);
+        btnEditar        .setEnabled(!Habilitar);
+        btnVoltar        .setEnabled(Habilitar);    
+        btnVoltar.setText("Cancelar");
+                
+        //mostra o titulo do formulario de acordo com o status
+        mostrarTitulo();
+        
+        //desabilitando os edits para edicao
+        c = jBoxDados.getComponents();
+        for(int i=0; i<c.length; i++)
+        {
+            c[i].setEnabled(Habilitar);  
+        }
+        txtCODIGO.setEditable(false);
+        txtNOME.requestFocus();
+                                  
+        //habilitando a pesquisa  e preenchendo a tabela se tiver registros
+         c = jBoxPesquisar.getComponents();
+         for(int i=0; i<c.length; i++)
+         {
+            c[i].setEnabled(!Habilitar);
+         }      
+    }
+   
+    public void Leitura()
+    {
+        //formatacao inicial dos botoes ao abrir o formulario
+        boolean Habilitar = true;
+        Component[]c      = null;
+        gravando          = false;
+        editando          = false;
+        clicouNaTabela    = false;
+        
+        txtPESQUISA.setEditable(true);
+        
+        btnNovo          .setEnabled(Habilitar);
+        btnImprimir      .setEnabled(Habilitar);
+        btnSair          .setEnabled(Habilitar);
+        btnGravar        .setEnabled(!Habilitar);
+        btnEditar        .setEnabled(!Habilitar);
+        btnVoltar        .setEnabled(!Habilitar);      
+                
+        //mostra o titulo do formulario de acordo com o status
+        mostrarTitulo();
+        
+        //desabilitando os edits para edicao
+        c = jBoxDados.getComponents();
+        for(int i=0; i<c.length; i++)
+        {
+            c[i].setEnabled(!Habilitar);  
+            umabiblio.limparTodosCampos(this);
+            txtPESQUISA.requestFocus();
+        }
+                       
+        //limpando a combo status
+        cmbStatus       .setSelectedIndex(-1);
+               
+        //pulando de campo com enter, nao usei porque esse procedimento desabilita o metodo de enter pra apagar o campo de pesquisa
+        //umabiblio.passaCamposComEnter(this);              
+                                  
+        //habilitando a pesquisa  e preenchendo a tabela se tiver registros
+         c = jBoxPesquisar.getComponents();
+         for(int i=0; i<c.length; i++)
+         {
+            c[i].setEnabled(Habilitar);
+         } 
+         umabiblio.LimparCombo(cmbDepartamento, "tbldepartamentos", "nome");
+    }
+    
+     public void HabilitarDesabilitarBotoes(boolean Habilitar)
+    {
+        //ações para quando clicar em cada botão
+        Component[]c = null;
+        
+        btnNovo          .setEnabled(Habilitar);
+        btnGravar        .setEnabled(!Habilitar);
+        btnEditar        .setEnabled(Habilitar);
+        btnVoltar        .setEnabled(!Habilitar);
+        btnImprimir      .setEnabled(Habilitar);
+        btnSair          .setEnabled(Habilitar);
+                
+        //habilitando os edits para edicao
+        c = jBoxDados.getComponents();
+        for(int i=0; i<c.length; i++)
+            c[i].setEnabled(!Habilitar);
+        
+        //desabilitando a pesquisa enquanto cadastra
+        c = jBoxPesquisar.getComponents();
+        for(int i=0; i<c.length; i++)
+            c[i].setEnabled(Habilitar);
+        
+    }
+    
+   public void PreencherTabela(String sql)
+   {
+        conexao.conectar();
+        ArrayList dados = new ArrayList();
+        String[] Colunas = new String[]
+        {
+            "Código", "Nome", "Email", "Pr", "Sei", "Simproc", "Ramal"
+        };
+            try 
+            {  
+                 conexao.ExecutarPesquisaSQL(sql); 
+                 while (conexao.rs.next())
+                 {   
+                    dados.add(new Object[]
+                    {                        
+                        conexao.rs.getInt("codigo"),
+                        conexao.rs.getString("nome"),
+                        conexao.rs.getString("email"),
+                        conexao.rs.getString("pr"),
+                        conexao.rs.getString("sei"),
+                        conexao.rs.getString("simproc"),
+                        conexao.rs.getString("ramal")
+                    });
+                    totalRegs = conexao.rs.getRow(); //passando o total de registros para o titulo
+                    };                        
+                    ModeloTabela modelo = new ModeloTabela(dados, Colunas);
+                    jTabela.setModel(modelo);
+                    //define tamanho das colunas
+                    jTabela.getColumnModel().getColumn(0).setPreferredWidth(50);  //define o tamanho da coluna
+                    jTabela.getColumnModel().getColumn(0).setResizable(false);    //nao será possivel redimencionar a coluna 
+                    jTabela.getColumnModel().getColumn(1).setPreferredWidth(130);
+                    jTabela.getColumnModel().getColumn(1).setResizable(false);  
+                    jTabela.getColumnModel().getColumn(2).setPreferredWidth(300);
+                    jTabela.getColumnModel().getColumn(2).setResizable(false);  
+                    jTabela.getColumnModel().getColumn(3).setPreferredWidth(80);
+                    jTabela.getColumnModel().getColumn(3).setResizable(false);  
+                    jTabela.getColumnModel().getColumn(4).setPreferredWidth(80);
+                    jTabela.getColumnModel().getColumn(4).setResizable(false);  
+                    jTabela.getColumnModel().getColumn(5).setPreferredWidth(90);
+                    jTabela.getColumnModel().getColumn(5).setResizable(false);  
+                    jTabela.getColumnModel().getColumn(6).setPreferredWidth(90);
+                    jTabela.getColumnModel().getColumn(6).setResizable(false);  
+                    
+                    //define propriedades da tabela
+                    jTabela.getTableHeader().setReorderingAllowed(false);        //nao podera ser reorganizada
+                    jTabela.setAutoResizeMode(jTabela.AUTO_RESIZE_OFF);          //nao será possivel redimencionar a tabela
+                    jTabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); //so podera selecionar apena uma linha  
+                                    
+            } catch (SQLException ex) {            
+                   JOptionPane.showMessageDialog(null, "Erro ao preencher o ArrayList!\nErro: " + ex.getMessage());
+        }finally{
+             conexao.desconectar();
+        }
+    }
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnGravar;
+    private javax.swing.JButton btnImprimir;
+    private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnSair;
+    private javax.swing.JButton btnVoltar;
+    private javax.swing.JComboBox<String> cmbDepartamento;
+    private javax.swing.JComboBox<String> cmbStatus;
+    private javax.swing.JLayeredPane jBoxBotoes;
+    private javax.swing.JLayeredPane jBoxDados;
+    private javax.swing.JLayeredPane jBoxPesquisar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTable jTabela;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField txtCODIGO;
+    private javax.swing.JTextField txtEMAIL;
+    private javax.swing.JTextField txtNOME;
+    private javax.swing.JTextArea txtOBS;
+    private javax.swing.JTextField txtPESQUISA;
+    private javax.swing.JTextField txtPR;
+    private javax.swing.JTextField txtRAMAL;
+    private javax.swing.JTextField txtSEI;
+    private javax.swing.JTextField txtSIMPROC;
+    // End of variables declaration//GEN-END:variables
+
+}
