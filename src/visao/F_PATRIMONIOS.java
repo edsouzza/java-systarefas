@@ -2123,7 +2123,7 @@ private void gravarEdicaoRegistro()
             
         }else{
             
-            if( (!tipo.equals("MICRO")) && !tipo.equals("NOTEBOOK")){
+            if( (!tipo.equals("MICRO")) && !tipo.equals("NOTEBOOK") && !tipo.equals("MONITOR")){
                 F_LISTACLIENTESATIVOS frm = new F_LISTACLIENTESATIVOS(null, true, "V");
                 frm.setVisible(true);                                    
             }else{
